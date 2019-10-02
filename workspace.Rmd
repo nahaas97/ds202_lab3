@@ -12,26 +12,26 @@ happy <- readRDS("HAPPY.rds")
 names(happy) = tolower(names(happy))
 
 #Data Cleaning
-happy$polviews[happy$polviews %in% "IAP"] <- "NA"
-happy$polviews[happy$polviews %in% "DK"] <- "NA"
-happy$health[happy$health %in% "IAP"] <- "NA"
-happy$health[happy$health %in% "DK"] <- "NA"
-happy$finrela[happy$finrela %in% "IAP"] <- "NA"
-happy$finrela[happy$finrela %in% "DK"] <- "NA"
+happy$polviews = happy$polviews[happy$polviews %in% "IAP"] <- "NA"
+happy$polviews = happy$polviews[happy$polviews %in% "DK"] <- "NA"
+happy$health = happy$health[happy$health %in% "IAP"] <- "NA"
+happy$health = happy$health[happy$health %in% "DK"] <- "NA"
+happy$finrela = happy$finrela[happy$finrela %in% "IAP"] <- "NA"
+happy$finrela = happy$finrela[happy$finrela %in% "DK"] <- "NA"
 
 #casting each factor variable
-as.character(happy$happy)
-as.numeric(happy$year)
-as.numeric(happy$age)
-as.character(happy$sex)
-as.character(happy$marital)
-as.character(happy$degree)
-as.character(happy$finrela)
-as.character(happy$health)
-as.numeric(happy$wtssall)
-as.character(happy$partyid)
-as.character(happy$polviews)
-happy$age[happy$age %in% "89 OR OLDER"] <- "89"
+happy$happy = as.character(happy$happy)
+happy$year = as.numeric(happy$year)
+happy$age = as.numeric(happy$age)
+happy$sex = as.character(happy$sex)
+happy$marital = as.character(happy$marital)
+happy$degree = as.character(happy$degree)
+happy$finrela = as.character(happy$finrela)
+happy$health = as.character(happy$health)
+happy$wtssall = as.numeric(happy$wtssall)
+happy$partyid = as.character(happy$partyid)
+happy$polviews = as.character(happy$polviews)
+happy$age = happy$age[happy$age %in% "89 OR OLDER"] <- "89"
 
 #ordering the factors by age
 library(tidyverse)
