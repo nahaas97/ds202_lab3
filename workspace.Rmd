@@ -1,0 +1,47 @@
+---
+title: "workspace"
+author: "Nathan Haas"
+date: "9/30/2019"
+output: html_document
+---
+
+
+```{r}
+library(classdata)
+happy <- readRDS("HAPPY.rds")
+names(happy) = tolower(names(happy))
+
+#Data Cleaning
+happy$polviews[happy$polviews %in% "IAP"] <- "NA"
+happy$polviews[happy$polviews %in% "DK"] <- "NA"
+happy$health[happy$health %in% "IAP"] <- "NA"
+happy$health[happy$health %in% "DK"] <- "NA"
+happy$finrela[happy$finrela %in% "IAP"] <- "NA"
+happy$finrela[happy$finrela %in% "DK"] <- "NA"
+
+#casting each factor variable
+as.character(happy$happy)
+as.numeric(happy$year)
+as.numeric(happy$age)
+as.character(happy$sex)
+as.character(happy$marital)
+as.character(happy$degree)
+as.character(happy$finrela)
+as.character(happy$health)
+as.numeric(happy$wtssall)
+as.character(happy$partyid)
+as.character(happy$polviews)
+happy$age[happy$age %in% "89 OR OLDER"] <- "89"
+
+#ordering the factors by age
+library(tidyverse)
+happyvsage = fct_reorder(happy$happy, happy$age, .fun=median, .desc = FALSE)
+sexvsage = fct_reorder(happy$sex, happy$age, .fun=median, .desc = FALSE)
+maritalvsage = fct_reorder(happy$marital, happy$age, .fun=median, .desc = FALSE)
+degreevsage = fct_reorder(happy$degree, happy$age, .fun=median, .desc = FALSE)
+finrelavsage = fct_reorder(happy$finrela, happy$age, .fun=median, .desc = FALSE)
+healthvsage = fct_reorder(happy$health, happy$age, .fun=median, .desc = FALSE)
+partyidvsage = fct_reorder(happy$partyid, happy$age, .fun=median, .desc = FALSE)
+polviewsvsage = fct_reorder(happy$polviews, happy$age, .fun=median, .desc = FALSE)
+```
+
