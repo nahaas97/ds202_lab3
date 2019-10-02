@@ -45,3 +45,14 @@ partyidvsage = fct_reorder(happy$partyid, happy$age, .fun=median, .desc = FALSE)
 polviewsvsage = fct_reorder(happy$polviews, happy$age, .fun=median, .desc = FALSE)
 ```
 
+Part 2
+```{r}
+library(ggplot2)
+
+ggplot(happy, aes(year, fill = sex)) + geom_histogram(binwidth=2) + labs(title="Histogram of Year by Sex", x="Year", y="Count")
+
+ggplot(happy, aes(partyid)) + geom_bar(color="red", fill="blue") + coord_flip() + labs(title = "Barchart of Party ID", y="Count", x="Party ID")
+
+ggplot(aes(x=year, y=wtssall), data=happy) + facet_wrap(~happy) + geom_point()
+```
+
