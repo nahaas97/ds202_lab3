@@ -32,10 +32,10 @@ Initial exploration revealed that some data processing was needed before we coul
 
 ```{r}
 library(classdata)
-happy <- readRDS("HAPPY.rds")
+happy <- readRDS("C:/Users/beagl/OneDrive/Documents/HAPPY.rds")
 names(happy) = tolower(names(happy))
 
-happy[happy$polviews %in% "IAP"] <- "NA"
+happy$polviews[happy$polviews %in% "IAP"] <- "NA"
 happy$polviews[happy$polviews %in% "DK"] <- "NA"
 happy$health[happy$health %in% "IAP"] <- "NA"
 happy$health[happy$health %in% "DK"] <- "NA"
@@ -82,32 +82,48 @@ polviewsvsage = fct_reorder(happy$polviews, happy$age, .fun=median, .desc = FALS
 
 Two variables of interest are `Year` and `Degree`. Their distributions are as follow:
 
+
 ```{r}
 library(ggplot2)
 ggplot(happy, aes(year, fill = sex)) + geom_histogram(binwidth=2) + labs(title="Histogram of Age by Sex", x="Year", y="Count")
 ```
+
+
 The distribution for "year" is fairly uniform throughout the dataset, suggesting that a similar number of interviews were completed each year. The most interviews were conducted in 2006-2008, while the least number of interviews occurred around 1980. This ultimately suggests that the data set provides an accurate representation of multiple years of data.
+ 
  
 ```{r}
 ggplot(happy, aes(degree, age)) + geom_boxplot() + labs(title = "Degree by Age")
 ```
+
+
 The distribution for degree by age seems to be fairly uniform.  Though we can see that the median age of Lt high school is considerably higher than every other degree option. Besides that we can see that there are similar spreads among each degree regarding ages.
 
 
 Next, we investigated the relationship between happiness and three variables in the data: health, age, and marital.
+
+
 ```{r}
 ggplot(happy, aes(health, fill=happy)) + geom_bar(color="red", position="fill") + coord_flip() + labs(title = "Barchart of Health Regarding Happiness", y="Percentage", x="Health")
 ```
+
+
 The distribution of health by happiness is as expected. The people with excellent health are generally the least likely to be not too happy, and this trend continues as people become less healthy. For example, people with poor health have the greatest proportion of people who are not happy; whereas, people with excellent health have the greatest proportion of people who are very happy.
+
 
 ```{r}
 ggplot(happy, aes(age, color=happy)) + geom_freqpoly(binwidth=1) + labs(title = "Happiness by Age", x="Age", y="Count")
 ```
+
+
 We can see that the distribution is scewed to the right.  This means that most of the entries come from younger particapants.  As age goes on we can see that the gaps between each level of happiness grow closer together.  This is due to the lower number of participants as age goes on.  The jump at the end of the data is also due to the fact that multiple "older than 89" values have been changed to just "89".
+
 
 ```{r}
 ggplot(happy, aes(marital, fill=happy)) + geom_bar(position="fill") + labs(title = "Barchart of Happiness Regarding Marital Status", y="Percentage", x="Level of Happiness")
 ```
+
+
 The distribution between marital status and age was fairly surprising. The people who identified as separated had the highest proportion of people say they were very happy; whereas the proportion of people who identified as married and very happy was the lowest. We expecetd people who are married to be the happiest, and people who were widowed to be the least happy, but the results were highly unexpected.
 
 
