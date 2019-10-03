@@ -1,30 +1,117 @@
 ---
-title: "team"
-author: "Nathan Haas"
-date: "9/26/2019"
+title: 'Lab 3: Exploring Happiness'
+subtitle: "Due: Thursday 10/03/2019 by 10 pm"
+author: "Alex Beagle, Nathan Haas"
+
+date: "10/02/2019"
 output: html_document
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+
+## Background
+
+The General Social Survey (GSS) has been run by NORC every other year since 1972 to keep track of current opinions across the United States. We are working with an excerpt of the dataset that covers years 1972 to 2016. The variable names along with a brief description are as follows: 
+
+| Variable      | Description   |    
+| ------------- |:-------------:| 
+| Year          | Year for this respondent | 
+| Age           | Age of respondent | 
+| Sex           | Sex of respondent | 
+| happy         | level of happiness |
+| marital       | Marital statue|
+| degree        | Education level |
+| finrela       | Opinion of income |
+| health        | status of health |
+| polviews      | view on politics |
+| partyid       | political identity |
+| wtssall       | weight of variables |
+
+## Data Cleaning 
+
+Initial exploration revealed that some data processing was needed before we could proceed with further visualization. All missing values were encoded with 'NA' as follows:
+
+```{r}
+library(classdata)
+happy <- readRDS("HAPPY.rds")
+names(happy) = tolower(names(happy))
+
+happy[happy$polviews %in% "IAP"] <- "NA"
+happy$polviews[happy$polviews %in% "DK"] <- "NA"
+happy$health[happy$health %in% "IAP"] <- "NA"
+happy$health[happy$health %in% "DK"] <- "NA"
+happy$finrela[happy$finrela %in% "IAP"] <- "NA"
+happy$finrela[happy$finrela %in% "DK"] <- "NA"
 ```
 
-## R Markdown
+In total there were `....` number of missing values for the following `....` variables. 
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Variables were also cast into the correct type in order to ease data visualization. This was done by:
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+```{r}
+happy$age[happy$age == "89 OR OLDER"] <- "89"
+happy$happy = as.character(happy$happy)
+happy$year = as.numeric(happy$year)
+happy$age = as.numeric(happy$age)
+happy$sex = as.character(happy$sex)
+happy$marital = as.character(happy$marital)
+happy$degree = as.character(happy$degree)
+happy$finrela = as.character(happy$finrela)
+happy$health = as.character(happy$health)
+happy$wtssall = as.numeric(happy$wtssall)
+happy$partyid = as.character(happy$partyid)
+happy$polviews = as.character(happy$polviews)
 ```
 
-## Including Plots
+Factors were also organized into meaningful order as follows: 
 
-You can also embed plots, for example:
+```{r}
+library(tidyverse)
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+happyvsage = fct_reorder(happy$happy, happy$age, .fun=median, .desc = FALSE)
+sexvsage = fct_reorder(happy$sex, happy$age, .fun=median, .desc = FALSE)
+maritalvsage = fct_reorder(happy$marital, happy$age, .fun=median, .desc = FALSE)
+degreevsage = fct_reorder(happy$degree, happy$age, .fun=median, .desc = FALSE)
+finrelavsage = fct_reorder(happy$finrela, happy$age, .fun=median, .desc = FALSE)
+healthvsage = fct_reorder(happy$health, happy$age, .fun=median, .desc = FALSE)
+partyidvsage = fct_reorder(happy$partyid, happy$age, .fun=median, .desc = FALSE)
+polviewsvsage = fct_reorder(happy$polviews, happy$age, .fun=median, .desc = FALSE)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+
+## Data Exploration 
+
+Two variables of interest are `Year` and `Degree`. Their distributions are as follow:
+
+```{r}
+library(ggplot2)
+ggplot(happy, aes(year, fill = sex)) + geom_histogram(binwidth=2) + labs(title="Histogram of Age by Sex", x="Year", y="Count")
+```
+The distribution for "year" is fairly uniform throughout the dataset, suggesting that a similar number of interviews were completed each year. The most interviews were conducted in 2006-2008, while the least number of interviews occurred around 1980. This ultimately suggests that the data set provides an accurate representation of multiple years of data.
+ 
+```{r}
+ggplot(happy, aes(degree, age)) + geom_boxplot() + labs(title = "Degree by Age")
+```
+The distribution for degree by age seems to be fairly uniform.  Though we can see that the median age of Lt high school is considerably higher than every other degree option. Besides that we can see that there are similar spreads among each degree regarding ages.
+
+
+Next, we investigated the relationship between happiness and three variables in the data: health, age, and marital.
+```{r}
+ggplot(happy, aes(health, fill=happy)) + geom_bar(color="red", position="fill") + coord_flip() + labs(title = "Barchart of Health Regarding Happiness", y="Percentage", x="Health")
+```
+The distribution of health by happiness is as expected. The people with excellent health are generally the least likely to be not too happy, and this trend continues as people become less healthy. For example, people with poor health have the greatest proportion of people who are not happy; whereas, people with excellent health have the greatest proportion of people who are very happy.
+
+```{r}
+ggplot(happy, aes(age, color=happy)) + geom_freqpoly(binwidth=1) + labs(title = "Happiness by Age", x="Age", y="Count")
+```
+We can see that the distribution is scewed to the right.  This means that most of the entries come from younger particapants.  As age goes on we can see that the gaps between each level of happiness grow closer together.  This is due to the lower number of participants as age goes on.  The jump at the end of the data is also due to the fact that multiple "older than 89" values have been changed to just "89".
+
+```{r}
+ggplot(happy, aes(marital, fill=happy)) + geom_bar(position="fill") + labs(title = "Barchart of Happiness Regarding Marital Status", y="Percentage", x="Level of Happiness")
+```
+The distribution between marital status and age was fairly surprising. The people who identified as separated had the highest proportion of people say they were very happy; whereas the proportion of people who identified as married and very happy was the lowest. We expecetd people who are married to be the happiest, and people who were widowed to be the least happy, but the results were highly unexpected.
+
+
+Overall we learned through the dataset that there is a lot of variation between happiness and each variable.  Some distribution results were expected, but others were very unexpected as shown above.  We have been shown that the largest group of participants were younger.  We have seen that most people in all categories are generally "pretty happy".  And finally we have seen in the data, that people's health had a definitive trend in how happy they were.
+
+
+
