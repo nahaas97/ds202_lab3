@@ -12,14 +12,15 @@ happy <- readRDS("HAPPY.rds")
 names(happy) = tolower(names(happy))
 
 #Data Cleaning
-happy$polviews = happy$polviews[happy$polviews %in% "IAP"] <- "NA"
-happy$polviews = happy$polviews[happy$polviews %in% "DK"] <- "NA"
-happy$health = happy$health[happy$health %in% "IAP"] <- "NA"
-happy$health = happy$health[happy$health %in% "DK"] <- "NA"
-happy$finrela = happy$finrela[happy$finrela %in% "IAP"] <- "NA"
-happy$finrela = happy$finrela[happy$finrela %in% "DK"] <- "NA"
+happy[happy$polviews %in% "IAP"] <- "NA"
+happy$polviews[happy$polviews %in% "DK"] <- "NA"
+happy$health[happy$health %in% "IAP"] <- "NA"
+happy$health[happy$health %in% "DK"] <- "NA"
+happy$finrela[happy$finrela %in% "IAP"] <- "NA"
+happy$finrela[happy$finrela %in% "DK"] <- "NA"
 
 #casting each factor variable
+happy$age[happy$age == "89 OR OLDER"] <- "89"
 happy$happy = as.character(happy$happy)
 happy$year = as.numeric(happy$year)
 happy$age = as.numeric(happy$age)
@@ -31,7 +32,7 @@ happy$health = as.character(happy$health)
 happy$wtssall = as.numeric(happy$wtssall)
 happy$partyid = as.character(happy$partyid)
 happy$polviews = as.character(happy$polviews)
-happy$age = happy$age[happy$age %in% "89 OR OLDER"] <- "89"
+
 
 #ordering the factors by age
 library(tidyverse)
@@ -49,10 +50,17 @@ Part 2
 ```{r}
 library(ggplot2)
 
-ggplot(happy, aes(year, fill = sex)) + geom_histogram(binwidth=2) + labs(title="Histogram of Year by Sex", x="Year", y="Count")
+ggplot(happy, aes(year, fill = sex)) + geom_histogram(binwidth=2) + labs(title="Histogram of Age by Sex", x="Age", y="Count")
 
-ggplot(happy, aes(partyid)) + geom_bar(color="red", fill="blue") + coord_flip() + labs(title = "Barchart of Party ID", y="Count", x="Party ID")
+ggplot(happy, aes(degree, age)) + geom_boxplot() + labs(title = "Degree by Age")
 
-ggplot(aes(x=year, y=wtssall), data=happy) + facet_wrap(~happy) + geom_point()
+ggplot(happy, aes(happy, fill=health)) + geom_bar(color="red", position="fill") + coord_flip() + 
+labs(title = "Barchart of Happy regarding health", y="Percentage", x="happy")
+
+ggplot(happy, aes(age, color=happy)) + geom_freqpoly(binwidth=1) + labs(title = "Happiness by Age", x="Age", y="Count")
+
+ggplot(happy, aes(marital, fill=happy)) + geom_bar(position="fill") + labs(title = "Barchart of Happy regarding marital status", y="Percentage", x="happy")
+
+
 ```
 
